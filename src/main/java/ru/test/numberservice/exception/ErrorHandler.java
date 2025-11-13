@@ -27,6 +27,19 @@ public class ErrorHandler {
         );
     }
 
+    @ExceptionHandler(InvalidFormatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiError handleFormatException(final InvalidFormatException e) {
+        log.error("400 Wrong format: {}", e.getMessage(), e);
+        String stackTrace = getStackTrace(e);
+        return new ApiError(
+                HttpStatus.BAD_REQUEST,
+                "Wrong format. Expexted .xlsx",
+                e.getMessage(),
+                stackTrace
+        );
+    }
+
     @ExceptionHandler(FileProcessingException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiError handleFileProcessingException(final FileProcessingException e) {
