@@ -9,7 +9,7 @@ import java.util.List;
 
 @Getter
 @Setter(AccessLevel.PRIVATE)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class ApiError {
