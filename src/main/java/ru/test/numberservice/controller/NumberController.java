@@ -10,62 +10,58 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import ru.test.numberservice.exception.ApiError;
 import ru.test.numberservice.service.NumberService;
 
 @Slf4j
 @RestController
+@RequestMapping("/api")
 @RequiredArgsConstructor
-@Tag(name = "Number Service", description = "Service for finding N-th min number in Excel file")
+@Tag(name = "Number Service", description = "Service for finding Nth minimum number in Excel files")
 public class NumberController {
 
     private final NumberService numberService;
 
     @Operation(
-            summary = "To find N-th min number in Excel file",
-            description = "The method accepts an Excel file path and a number N and returns" +
-                    " the N-th min number. Uses an algorithm with O(M log N) time complexity"
+            summary = "Find Nth minimum number",
+            description = "Finds the Nth minimum number in an Excel file"
     )
-    @ApiResponses(value = {
+    @ApiResponses({
             @ApiResponse(
                     responseCode = "200",
-                    description = "Success search",
-                    content = @Content(schema = @Schema(implementation = Integer.class))
+                    description = "Successful search",
+                    content = @Content(mediaType = "application/json")
             ),
             @ApiResponse(
                     responseCode = "400",
-                    description = "Wrong request parameters or not enough numbers in the file"
+                    description = "Wrong request parameters or not enough numbers in the file",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class)
+                    )
             ),
             @ApiResponse(
                     responseCode = "500",
-                    description = "Error processing file or reading data"
+                    description = "Error processing file or reading data",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class)
+                    )
             )
     })
     @PostMapping("/find-nth-min")
     public ResponseEntity<Integer> findNthMinNumber(
-            @Parameter(
-                    description = "Absolute path to the local Excel file",
-                    required = true,
-                    example = "C:/data/numbers.xlsx"
-            )
-            @RequestParam String filePath,
+            @RequestParam
+            @Parameter(description = "Path to Excel file", example = "/path/to/file.xlsx")
+            String filePath,
 
-            @Parameter(
-                    description = "The ordinal number of the minimum number (starting with 1)",
-                    required = true,
-                    example = "3"
-            )
-            @RequestParam int n) {
+            @RequestParam
+            @Parameter(description = "N-th minimum number to find", example = "5")
+            int n) {
 
         log.info("Received request to find {}-th min number in file: {}", n, filePath);
-
-        long startTime = System.currentTimeMillis();
         int result = numberService.findNthMinNumber(filePath, n);
-        long endTime = System.currentTimeMillis();
-
-        log.info("Found {}-th min number: {} (processing time: {} ms)", n, result, endTime - startTime);
         return ResponseEntity.ok(result);
     }
 }

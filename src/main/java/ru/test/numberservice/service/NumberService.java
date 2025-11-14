@@ -3,7 +3,6 @@ package ru.test.numberservice.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import ru.test.numberservice.exception.FileProcessingException;
 import ru.test.numberservice.exception.InvalidFormatException;
@@ -32,7 +31,7 @@ public class NumberService {
         validateInput(filePath, n);
 
         try (FileInputStream file = new FileInputStream(filePath);
-             Workbook workbook = new XSSFWorkbook(file)) {
+             Workbook workbook = WorkbookFactory.create(file)) {
 
             Sheet sheet = workbook.getSheetAt(0);
             int result = findNthMinFromSheet(sheet, n);
