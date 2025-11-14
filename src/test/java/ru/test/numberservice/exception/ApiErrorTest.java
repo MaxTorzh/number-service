@@ -1,8 +1,7 @@
-package ru.tets.numberservice.exception;
+package ru.test.numberservice.exception;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
-import ru.test.numberservice.exception.ApiError;
 
 import java.time.LocalDateTime;
 import java.util.List;
