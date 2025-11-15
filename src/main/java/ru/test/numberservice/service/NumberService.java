@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.stereotype.Service;
 import ru.test.numberservice.exception.FileProcessingException;
-import ru.test.numberservice.exception.InvalidFormatException;
 import ru.test.numberservice.exception.ValidationException;
+import ru.test.numberservice.validator.FileValidator;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -18,17 +18,16 @@ import java.util.PriorityQueue;
 @RequiredArgsConstructor
 public class NumberService {
 
+    private final FileValidator fileValidator;
+
     /**
      * Поиск N-го минимального числа в Excel файле
-     * Используется  алгоритм с Max Heap
-     *
-     * @param filePath путь к Excel файлу
-     * @param n порядковый номер минимального числа
-     * @return N-ное минимальное число
+     * Используется алгоритм с Max Heap
      */
     public int findNthMinNumber(String filePath, int n) {
         log.debug("Starting search for {}-th min number in file: {}", n, filePath);
-        validateInput(filePath, n);
+
+        fileValidator.validateInput(filePath, n);
 
         try (FileInputStream file = new FileInputStream(filePath);
              Workbook workbook = WorkbookFactory.create(file)) {
@@ -40,8 +39,6 @@ public class NumberService {
 
         } catch (IOException e) {
             throw new FileProcessingException("File reading error: " + filePath, e);
-        } catch (InvalidFormatException e) {
-            throw new ValidationException("Wrong file format. Expected .xlsx format");
         } catch (Exception e) {
             throw new FileProcessingException("Excel file processing error", e);
         }
@@ -54,16 +51,44 @@ public class NumberService {
      */
     private int findNthMinFromSheet(Sheet sheet, int n) {
         PriorityQueue<Integer> maxHeap = new PriorityQueue<>(n, Collections.reverseOrder());
-
         int numbersProcessed = 0;
 
         for (Row row : sheet) {
+            if (row == null) {
+                log.trace("Skipping null row");
+                continue;
+            }
+
             for (Cell cell : row) {
+                if (cell == null) {
+                    log.trace("Skipping null cell");
+                    continue;
+                }
+
                 if (cell.getCellType() == CellType.NUMERIC) {
-                    int number = (int) Math.round(cell.getNumericCellValue());
-                    processNumber(number, maxHeap, n);
-                    numbersProcessed++;
-                    log.trace("Processed number: {}, heap size: {}, heap: {}", number, maxHeap.size(), maxHeap);
+                    double value = cell.getNumericCellValue();
+
+                    if (isInteger(value)) {
+                        int number = (int) value;
+                        processNumber(number, maxHeap, n);
+                        numbersProcessed++;
+                        log.trace("Processed number: {}, heap size: {}, heap: {}", number, maxHeap.size(), maxHeap);
+                    } else {
+                        log.warn("Skipping non-integer number: {}", value);
+                    }
+
+                } else if (cell.getCellType() == CellType.STRING) {
+                    try {
+                        String cellValue = cell.getStringCellValue().trim();
+                        if (!cellValue.isEmpty()) {
+                            int number = Integer.parseInt(cellValue);
+                            processNumber(number, maxHeap, n);
+                            numbersProcessed++;
+                            log.trace("Processed number from string: {}, heap size: {}", number, maxHeap.size());
+                        }
+                    } catch (NumberFormatException e) {
+                        log.warn("Skipping non-numeric string: {}", cell.getStringCellValue());
+                    }
                 }
             }
         }
@@ -73,6 +98,7 @@ public class NumberService {
                     String.format("The file has %d numbers, but asked for %d-th min", numbersProcessed, n)
             );
         }
+
         int result = maxHeap.peek();
         log.debug("Found {}-th min number: {}", n, result);
         return result;
@@ -91,26 +117,9 @@ public class NumberService {
     }
 
     /**
-     * Валидация входных параметров
+     * Проверка на целое число
      */
-    private void validateInput(String filePath, int n) {
-        if (filePath == null || filePath.trim().isEmpty()) {
-            throw new ValidationException("Path to file cannot be empty");
-        }
-        if (!filePath.toLowerCase().endsWith(".xlsx")) {
-            throw new ValidationException("File should be xlsx extension");
-        }
-        if (n <= 0) {
-            throw new ValidationException("Number N should be positive");
-        }
-
-        java.io.File file = new java.io.File(filePath);
-        if (!file.exists()) {
-            throw new ValidationException("File does not exists: " + filePath);
-        }
-        if (!file.canRead()) {
-            throw new ValidationException("No rights for reading: " + filePath);
-        }
-        log.debug("Input validation passed - file: {}, n: {}", filePath, n);
+    private boolean isInteger(double value) {
+        return value == Math.floor(value) && !Double.isInfinite(value);
     }
 }

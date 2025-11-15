@@ -22,14 +22,21 @@ public class ApiError {
     @Schema(description = "Error reason", example = "Validation Error")
     private String reason;
 
-    @Schema(description = "Error message", example = "File should be xlsx extension")
+    @Schema(description = "Error message",
+            examples = {
+                    "File should be xlsx extension",
+                    "Number N should be positive",
+                    "File does not exist",
+                    "Invalid request parameters"
+            })
     private String message;
 
-    @Schema(description = "List of errors")
+    @Schema(description = "List of errors",
+            example = "[\"File validation failed\", \"Invalid format\"]")
     private List<String> errors;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd:HH:mm:ss")
-    @Schema(description = "Timestamp of error", example = "2025-11-10:00:06:26")
+    @Schema(description = "Timestamp of error", example = "2025-11-10:00:06:28")
     private LocalDateTime timestamp;
 
     public ApiError(HttpStatus status, String reason, String message, String stackTrace) {
