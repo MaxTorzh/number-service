@@ -14,6 +14,10 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Интеграционные тесты для NumberController.
+ * Проверяют корректность обработки запросов и различных сценариев ошибок.
+ */
 @WebMvcTest(NumberController.class)
 @ExtendWith(MockitoExtension.class)
 class NumberControllerTest {

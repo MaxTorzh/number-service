@@ -5,6 +5,10 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Конфигурация Swagger для API сервиса.
+ * Предоставляет документацию OpenAPI с описанием эндпоинтов.
+ */
 @Configuration
 public class SwaggerConfig {
 

@@ -7,6 +7,10 @@ import ru.test.numberservice.exception.ValidationException;
 
 import java.io.File;
 
+/**
+ * Валидатор файлов и входных параметров для сервиса обработки Excel файлов.
+ * Проверяет корректность пути к файлу, его существование, права доступа и формат.
+ */
 @Slf4j
 @Component
 @RequiredArgsConstructor

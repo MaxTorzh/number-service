@@ -8,6 +8,10 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Класс для стандартизированного представления ошибок API.
+ * Содержит информацию о статусе HTTP, причине ошибки, сообщении и временной метке.
+ */
 @Getter
 @Setter(AccessLevel.PRIVATE)
 @NoArgsConstructor

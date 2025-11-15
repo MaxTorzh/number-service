@@ -15,6 +15,10 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+/**
+ * Тесты для NumberService.
+ * Проверяют корректность алгоритма поиска N-го минимального числа и обработку ошибок.
+ */
 @ExtendWith(MockitoExtension.class)
 class NumberServiceTest {
 

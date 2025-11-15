@@ -12,6 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.test.numberservice.service.NumberService;
 
+/**
+ * REST контроллер для поиска N-го минимального числа в Excel файлах.
+ * Предоставляет endpoint для загрузки пути к файлу и номера порядковой статистики.
+ */
 @Slf4j
 @RestController
 @RequestMapping("/api")

@@ -8,6 +8,10 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Unit тесты для ApiError класса.
+ * Проверяют корректность создания объектов ошибок различными способами.
+ */
 class ApiErrorTest {
 
     @Test

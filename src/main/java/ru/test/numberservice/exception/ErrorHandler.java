@@ -11,6 +11,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
+/**
+ * Глобальный обработчик исключений для REST контроллеров.
+ * Преобразует различные типы исключений в стандартные JSON ответы с кодами ошибок.
+ */
 @Slf4j
 @RestControllerAdvice
 public class ErrorHandler {

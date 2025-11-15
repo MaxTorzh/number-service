@@ -13,6 +13,10 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.PriorityQueue;
 
+/**
+ * Сервис для поиска N-го минимального числа в Excel файлах.
+ * Использует алгоритм Max Heap для эффективного поиска без полной сортировки.
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -21,8 +25,14 @@ public class NumberService {
     private final FileValidator fileValidator;
 
     /**
-     * Поиск N-го минимального числа в Excel файле
-     * Используется алгоритм с Max Heap
+     * Поиск N-го минимального числа в Excel файле.
+     * Используется алгоритм с Max Heap для оптимизации памяти и времени выполнения.
+     *
+     * @param filePath путь к Excel файлу (.xlsx)
+     * @param n номер минимального элемента
+     * @return N-й минимальный элемент из файла
+     * @throws ValidationException если параметры некорректны или файл не прошел валидацию
+     * @throws FileProcessingException если возникла ошибка при чтении или обработке файла
      */
     public int findNthMinNumber(String filePath, int n) {
         log.debug("Starting search for {}-th min number in file: {}", n, filePath);
